@@ -71,7 +71,7 @@ ymaps.modules.define('MultiRouteCustomView', [
 
      
           console.log("poslal json");
-          axios.post('https://127.0.0.1:8000/way/', {
+          axios.post('https://susanin-navigate.herokuapp.com/way/', {
             txtway: txtway})
             .then(response => {
               //const busStop = response.data.busStop;
