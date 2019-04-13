@@ -14,7 +14,7 @@
             longitude: longitude})
             .then(response => {
               const busStop = response.data.busStop;
-              alert("Остановка"+" "+busStop+" "+this.latitude+" "+this.longitude);
+              alert("Остановка"+" "+busStop+" "+latitude+" "+longitude);
               console.log(response);
             })
             .catch(function (error) {
@@ -23,3 +23,6 @@
             });
           setTimeout(run, 10000); })
         }, 10000);
+
+
+ 

@@ -66,7 +66,25 @@ ymaps.modules.define('MultiRouteCustomView', [
                 result.push("Всего маршрутов: " + routes.length + ".");
                 for (var i = 0, l = routes.length; i < l; i++) {
                     result.push(this.processRoute(i, routes[i]));
-                                console.log(result)
+                                console.log(result[result.length-1])
+                                var txtway = result[result.length-1];
+
+     
+          console.log("poslal json");
+          axios.post('https://susanin-navigate.herokuapp.com/way/', {
+            txtway: txtway})
+            .then(response => {
+              //const busStop = response.data.busStop;
+              //alert("Остановка"+" "+busStop+" "+latitude+" "+longitude);
+              console.log(response);
+            })
+            .catch(function (error) {
+              console.log(error);
+              console.log("oshibka json")
+            });
+         
+
+
 
                 }
             } else {
