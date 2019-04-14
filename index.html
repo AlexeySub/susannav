@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Работа с данными и событиями модели мультимаршрута</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script src="https://yandex.st/jquery/2.2.3/jquery.min.js" type="text/javascript"></script>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=07d4153d-fb75-46bc-877a-a5b781b6a6c0" type="text/javascript"></script>
+    <script src="custom_view.js" type="text/javascript"></script>
+    <script src="byLex.js" type="text/javascript"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<<!--    <script src="yandex.js" type="text/javascript"></script> -->
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id="viewContainer"></div>
+    <button onclick="speech ()">Слушать</button>
+
+ 
+    <p>This demo shows how to send push notifications with a payload.</p>
+
+<form>
+Notification payload: <input id='notification-payload' type='text' value='Insert here a payload'></input>
+Notification delay: <input id='notification-delay' type='number' value='5'></input> seconds
+Notification Time-To-Live: <input id='notification-ttl' type='number' value='0'></input> seconds
+</form>
+
+<button id="doIt">Request sending a notification!</button>
+
+<script src="tools.js"></script>
+ <script src="index.js"></script>
+  <script>
+  // Создаем распознаватель
+  var recognizer = new webkitSpeechRecognition();
+
+  // Ставим опцию, чтобы распознавание началось ещё до того, как пользователь закончит говорить
+  recognizer.interimResults = true;
+
+  // Какой язык будем распознавать?
+  recognizer.lang = 'ru-Ru';
+
+  function command(text) {
+    arr = text.split(' ');
+    return arr;
+  }
+  var adress = '';
+  // Используем колбек для обработки результатов
+  recognizer.onresult = function (event) {
+    var result = event.results[event.resultIndex];
+    if (result.isFinal) {           // если закончили говорить
+      res = result[0].transcript;   // строка, которую сказали
+      alert('Вы сказали: ' + res);
+      res = command(res)            // получили массив слов
+
+      var startindex = 0;           // индекс начала команды 
+
+      for (var i = 0; i < res.length; i++) {
+        if (res[i] == "поехали") {
+          startindex = i;           // нашли индекс начала команды
+        }
+      }
+      adress = res.slice(startindex + 2).join(' ');
+      console.log('Adress: ', adress);
+      ymaps.ready(init);
+      } else {
+      res = result[0].transcript;
+      console.log('Промежуточный результат: ', res);
+    }
+  };
+
+
+
+  function speech () {
+    // Начинаем слушать микрофон и распознавать голос
+    recognizer.start();
+  }
+
+  function init () {
+    // Создаем модель мультимаршрута.
+    var multiRouteModel = new ymaps.multiRouter.MultiRouteModel([
+           [56.2573467892592, 43.8555007018054],
+            adress
+        ]);
+
+    ymaps.modules.require([
+        'MultiRouteCustomView'
+    ], function (MultiRouteCustomView) {
+        // Создаем экземпляр текстового отображения модели мультимаршрута.
+        // см. файл custom_view.js
+        new MultiRouteCustomView(multiRouteModel);
+    });
+
+    multiRouteModel.setParams({ routingMode: 'masstransit' }, true);
+
+
+}
+
+//ymaps.ready(init);
+
+  </script>
+</body>
+
+</html>
